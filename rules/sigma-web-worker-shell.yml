@@ -1,0 +1,44 @@
+title: Web Server Worker Spawning a Shell or Downloader
+id: 8f2c1a4e-php2shell-0001
+status: experimental
+description: >
+  Detects a PHP/Apache/nginx worker spawning an interactive shell or download
+  utility, a common post-exploitation step for php2shell (CVE-2026-109618 /
+  CVE-2026-109619) and for webshells generally.
+references:
+  - https://securitylabs.datadoghq.com/articles/php2shell-critical-vulnerabilities-in-php/
+author: php2shell-assessment
+date: 2026/10/22
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  parent:
+    ParentImage|endswith:
+      - '/apache2'
+      - '/httpd'
+      - '/php-fpm'
+      - '/php-fpm8.2'
+      - '/php-fpm8.3'
+      - '/php-fpm8.4'
+      - '/php-fpm8.5'
+      - '/nginx'
+  child:
+    Image|endswith:
+      - '/sh'
+      - '/bash'
+      - '/dash'
+      - '/curl'
+      - '/wget'
+      - '/nc'
+      - '/ncat'
+      - '/python3'
+  condition: parent and child
+falsepositives:
+  - Legitimate CGI wrappers or maintenance scripts launched by the web user
+level: high
+tags:
+  - attack.execution
+  - attack.t1059.004
+  - cve.2026.109618
+  - cve.2026.109619
