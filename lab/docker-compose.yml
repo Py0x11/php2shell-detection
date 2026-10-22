@@ -1,0 +1,26 @@
+services:
+  vuln-php:
+    image: php:8.5.11-apache
+    container_name: php2shell-vuln
+    ports:
+      - "8088:80"
+    volumes:
+      - ./php.ini:/usr/local/etc/php/php.ini:ro
+      - ./index.php:/var/www/html/index.php:ro
+      - ./phpinfo.php:/var/www/html/phpinfo.php:ro
+    environment:
+      APACHE_RUN_USER: www-data
+      APACHE_RUN_GROUP: www-data
+
+  patched-php:
+    image: php:8.5.12-apache
+    container_name: php2shell-patched
+    ports:
+      - "8089:80"
+    volumes:
+      - ./php.ini:/usr/local/etc/php/php.ini:ro
+      - ./index.php:/var/www/html/index.php:ro
+      - ./phpinfo.php:/var/www/html/phpinfo.php:ro
+    environment:
+      APACHE_RUN_USER: www-data
+      APACHE_RUN_GROUP: www-data

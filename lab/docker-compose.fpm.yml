@@ -1,0 +1,52 @@
+services:
+  php:
+    image: php:8.5.11-fpm
+    volumes:
+      - ./php.ini:/usr/local/etc/php/php.ini:ro
+      - ./index.php:/var/www/html/index.php:ro
+      - ./phpinfo.php:/var/www/html/phpinfo.php:ro
+
+  web:
+    image: nginx:1.24-alpine
+    ports:
+      - "18090:80"
+    depends_on:
+      - php
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./index.php:/var/www/html/index.php:ro
+      - ./phpinfo.php:/var/www/html/phpinfo.php:ro
+
+  php-patched:
+    image: php:8.5.12-fpm
+    volumes:
+      - ./php.ini:/usr/local/etc/php/php.ini:ro
+      - ./index.php:/var/www/html/index.php:ro
+      - ./phpinfo.php:/var/www/html/phpinfo.php:ro
+
+  web-patched:
+    image: nginx:1.24-alpine
+    ports:
+      - "18091:80"
+    depends_on:
+      - php-patched
+    volumes:
+      - ./nginx-patched.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./index.php:/var/www/html/index.php:ro
+      - ./phpinfo.php:/var/www/html/phpinfo.php:ro
+
+  php-hidden:
+    image: php:8.5.11-fpm
+    volumes:
+      - ./php.ini.hidden:/usr/local/etc/php/php.ini:ro
+      - ./index.php:/var/www/html/index.php:ro
+
+  web-hidden:
+    image: nginx:1.24-alpine
+    ports:
+      - "18092:80"
+    depends_on:
+      - php-hidden
+    volumes:
+      - ./nginx-hidden.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./index.php:/var/www/html/index.php:ro
